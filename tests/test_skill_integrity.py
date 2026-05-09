@@ -140,14 +140,19 @@ class TestScriptDirectories:
         return result
 
     def test_scripts_dirs_have_python_files(self):
-        """Every scripts/ directory should contain at least one .py file."""
+        """Every scripts/ directory should contain at least one script file."""
+        script_exts = ("*.py", "*.mjs", "*.js", "*.ts", "*.sh")
         for skill_dir in ALL_SKILL_DIRS:
             scripts_dir = os.path.join(skill_dir, "scripts")
-            if os.path.isdir(scripts_dir):
-                py_files = glob.glob(os.path.join(scripts_dir, "*.py"))
-                assert len(py_files) > 0, (
-                    f"{_short_id(skill_dir)}/scripts/ exists but has no .py files"
-                )
+            if not os.path.isdir(scripts_dir):
+                continue
+            files = []
+            for pat in script_exts:
+                files.extend(glob.glob(os.path.join(scripts_dir, pat)))
+            assert len(files) > 0, (
+                f"{_short_id(skill_dir)}/scripts/ exists but has no script files "
+                f"(checked: {script_exts})"
+            )
 
     def test_no_empty_skill_md(self):
         """SKILL.md files should not be empty."""
