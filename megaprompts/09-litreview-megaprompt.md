@@ -1,12 +1,12 @@
-# Mega Prompt: Literature Review Helper Skill
+# Mega Prompt: Litreview — Academic Literature Orientation Skill
 
 ## Role
 
-You are a **Skill Architect** specializing in academic research workflows. Generate a production-grade, distributable Claude skill that turns a user’s research question into a strategically planned mini literature review, delivered as a researcher-friendly Word document (.docx).
+You are a **Skill Architect** specializing in academic research workflows. Generate a production-grade, distributable Claude skill that turns a user's research question into a strategically planned mini literature review, delivered as a researcher-friendly Word document (.docx).
 
 ## Output Target
 
-Single file: `${SKILLS_DIR}/literature-review-helper/SKILL.md`
+Single file: `${SKILLS_DIR}/litreview/SKILL.md`
 
 Word budget: 2,200–2,500 words. Hard ceiling: 2,800.
 
@@ -34,14 +34,53 @@ The generated skill must follow this structure:
 ```
 1. Data Integrity Principles (source / counting / tool constraints)
 2. Error Handling rules
-3. Phase 1: Initial Reconnaissance (one broad search)
-4. Phase 2: Choose Framework & Generate Sub-areas (PICO default + fallbacks)
-5. Checkpoint: Confirm with User (framework table + depth selector)
-6. Phase 3: Execute Targeted Searches (sequential, by depth budget)
-7. Phase 4: Produce the Research Guide (.docx)
-8. Document Structure (8 sections)
-9. docx Technical Requirements
+3. Phase 0: Grill-Me Intake (3 forcing questions before recon search)
+4. Phase 1: Initial Reconnaissance (one broad search)
+5. Phase 2: Choose Framework & Generate Sub-areas (PICO default + fallbacks)
+6. Checkpoint: Confirm with User (framework table + depth selector + sub-area adjustment)
+7. Phase 3: Execute Targeted Searches (sequential, by depth budget)
+8. Phase 4: Produce the Research Guide (.docx)
+9. Document Structure (8 sections)
+10. docx Technical Requirements
 ```
+
+## Grill-Me Intake Specification
+
+Three forcing questions before the recon search. The existing interactive checkpoint after Phase 2 is preserved and re-described in grill-me discipline terms. Each question carries "why I'm asking".
+
+### Q1 (root) — Research question specificity
+
+> **State the research question in 1–2 sentences. Specific is better — "How do LLMs perform on clinical reasoning tasks compared to physicians?" beats "AI in medicine". Vague questions produce vague reviews.**
+>
+> *Why I'm asking:* The reconnaissance search hinges on precise terminology. Vague questions produce thin recon results that don't yield a useful framework breakdown.
+
+Refuse mush. Re-ask once with examples if user is too broad.
+
+### Q2 (depends on Q1) — Framework hint
+
+> **Framework — pick one or say "you pick":**
+> 1. PICO (Population / Intervention / Comparison / Outcome — most clinical questions)
+> 2. SPIDER (Sample / Phenomenon / Design / Evaluation / Research-type — social/qualitative)
+> 3. Decomposition (Problem / Solution / Evaluation / Limitations — technology-focused)
+> 4. Hybrid (you pick which components from which framework)
+> 5. You pick — analyze Q1 and recommend
+>
+> *Why I'm asking:* PICO is the default for ~70% of clinical questions but maps poorly to qualitative work or technology evaluation. Picking upfront saves the recon search from suggesting a misaligned framework.
+
+Forcing choice with default ("you pick"). The skill should also surface its own framework recommendation after the recon search so user can override.
+
+### Q3 (depends on Q1) — Depth tentative
+
+> **Tentative depth — pick one. Final confirmation comes after the framework breakdown:**
+> 1. Quick scan (5 searches)
+> 2. Standard review (10 searches)
+> 3. Deep dive (20 searches)
+>
+> *Why I'm asking:* I ask this twice — once now to calibrate the recon search emphasis, once after the framework breakdown to confirm. Tentative answer affects which sub-areas to surface first; final answer drives search budget allocation.
+
+Forcing choice. The skill re-asks at the post-Phase-2 checkpoint after the user has seen the framework breakdown.
+
+**Stop condition:** 3 questions max before Phase 1. The post-Phase-2 checkpoint is its own grill-me moment with the framework table + sub-area-adjustment + depth-reconfirmation.
 
 ## Critical Improvements Over Naive Implementation
 
@@ -114,9 +153,9 @@ The generated DOCX has 8 sections. Document each:
 1. **Bibliography** — Alphabetical by first author. Every entry has clickable “View on Consensus” link. Every inline citation matches a bibliography entry.
 1. **Audit Log** — Search summary table (#, query, filters, papers returned, status), counts block, coverage notes including detected tier and theoretical ceiling
 
-## Interactive Checkpoint Specification
+## Interactive Checkpoint Specification (grill-me discipline)
 
-After Phase 2, the skill must:
+After Phase 2, the skill runs a second grill-me moment — this one is a confirmation loop with forcing options:
 
 1. Output 3-4 sentence summary of initial-search findings (themes, terminology, evidence landscape)
 1. Output framework breakdown table:
@@ -124,9 +163,14 @@ After Phase 2, the skill must:
 | Framework Component | How It Maps to This Topic | Proposed Sub-area to Explore |
 
 1. Include a 5th cross-cutting theme row
-1. Present depth selector (Quick / Standard / Deep) with the practical constraint note (rate limit + per-query cap)
-1. Present adjustment options (“looks good — go ahead” / “adjust sub-areas” / “add sub-area on X” / “remove and replace one”)
-1. Wait for user response before Phase 3
+1. **Re-confirm depth** with forcing choice (Quick / Standard / Deep), surfacing the practical constraint (rate limit + per-query cap from plan-tier detection) so user can calibrate
+1. **Sub-area forcing options** — one of:
+   - "Looks good — proceed with these sub-areas"
+   - "Adjust: add sub-area on [X]"
+   - "Adjust: remove and replace [Y] with [Z]"
+   - "Restart with different framework"
+1. **Why I'm asking**: A wrong framework or sub-area set wastes the search budget. This is the last cheap moment to correct course.
+1. Wait for user response before Phase 3. Refuse to start Phase 3 without explicit user choice.
 
 If your environment supports interactive `sendPrompt`-style buttons, use them. Otherwise present as numbered options.
 
@@ -182,8 +226,8 @@ Document at top:
 
 ```yaml
 ---
-name: literature-review-helper
-description: "Automated literature review assistant that searches academic papers via Consensus, builds a strategic search plan using PICO (or SPIDER / Decomposition as fallbacks), and synthesizes findings into a professionally formatted Word document (.docx) research guide. Configurable search depth (5/10/20 queries) controls coverage vs. speed. Output is a 'launching pad' — not a finished review, but an orientation guide that lets a researcher dive in confidently. Triggers: 'I'm starting a literature review on X', 'I'm writing a paper on X', 'help me research X', 'I'm doing research on X', 'can you help me research X'. Do NOT trigger for single one-off paper searches where the user just wants a quick list — that's a plain Consensus search."
+name: litreview
+description: "Academic literature orientation skill that searches papers via Consensus, builds a strategic search plan using PICO (default) or SPIDER / Decomposition / hybrid as fallbacks, and synthesizes findings into a professionally formatted Word document (.docx) research guide. Grill-me intake (research question specificity + framework hint + tentative depth) before the recon search; a second forcing checkpoint after Phase 2 confirms framework + sub-areas + depth before searches consume budget. Configurable depth (5/10/20 queries) controls coverage vs. speed. Output is a 'launching pad' — not a finished review, but an orientation guide that lets a researcher dive in confidently. Triggers: 'litreview on [topic]', 'literature review on [topic]', 'I'm starting a literature review on X', 'I'm writing a paper on X', 'help me research X', 'I'm doing research on X', 'can you help me research X'. Do NOT trigger for single one-off paper searches where the user just wants a quick list — that's a plain Consensus search."
 ---
 ```
 
@@ -201,11 +245,16 @@ description: "Automated literature review assistant that searches academic paper
 
 ## Validation Checklist (Run Before Delivery)
 
-- [ ] Frontmatter parses as YAML
+- [ ] Frontmatter parses as YAML (name: litreview)
+- [ ] Output target path uses `${SKILLS_DIR}/litreview/SKILL.md`
 - [ ] Word count 2,200–2,800
 - [ ] Data Integrity Principles block present at top
+- [ ] Grill-me Phase 0 intake: 3 forcing questions before recon search
+- [ ] Q1 (research question) refuses vague answers
+- [ ] Q2 (framework hint) forcing choice with "you pick" default
+- [ ] Q3 (tentative depth) re-confirmed at post-Phase-2 checkpoint
 - [ ] Three frameworks documented (PICO primary, SPIDER + Decomposition fallback, hybrid noted)
-- [ ] Interactive checkpoint requirement documented (table + depth selector + adjustments)
+- [ ] Interactive checkpoint described as grill-me forcing-options moment (not free-text)
 - [ ] All 3 search budgets (5/10/20) fully allocated with reasoning
 - [ ] Cross-search intelligence (3 trackers) documented
 - [ ] All 8 DOCX sections specified
