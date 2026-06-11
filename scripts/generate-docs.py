@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate MkDocs documentation pages from SKILL.md files, agents, and commands."""
 
+import argparse
 import os
 import re
 import shutil
@@ -26,6 +27,7 @@ DOMAINS = {
     "commercial": ("Commercial", 14, ":material-handshake-outline:", "commercial-skills"),
     "research-ops": ("Research Operations", 15, ":material-flask-outline:", "research-ops-skills"),
     "compliance-os": ("Compliance OS", 16, ":material-shield-lock-outline:", "compliance-os"),
+    "markdown-html": ("Markdown to HTML", 17, ":material-language-html5:", "markdown-html-skills"),
 }
 
 # Skills to skip (nested assets, samples, etc.)
@@ -201,6 +203,7 @@ DOMAIN_SEO_SUFFIX = {
     "productivity": "Agent Skill for Personal Productivity",
     "marketing": "Agent Skill for Landing Pages",
     "research": "Agent Skill for Research Workflows",
+    "markdown-html": "Agent Skill for HTML Output",
 }
 
 # Domain-specific description context for pages without frontmatter descriptions
@@ -217,6 +220,7 @@ DOMAIN_SEO_CONTEXT = {
     "productivity": "personal productivity agent skill and Claude Code plugin for brain-dump capture, email triage, and reflection",
     "marketing": "landing-page generator agent skill and Claude Code plugin for single-file HTML output with 4 design styles",
     "research": "research orchestrator agent skill and Claude Code plugin for hybrid routing across pulse, litreview, grants, dossier, patent, syllabus, and notebooklm specialists",
+    "markdown-html": "markdown-to-interactive-HTML converter agent skill and Claude Code plugin for single-file documents, code reviews, and slide decks",
 }
 
 
@@ -415,6 +419,20 @@ def generate_nav_entry(skills_by_domain):
     return "\n".join(nav_lines)
 
 
+def parse_args(argv=None):
+    """Parse CLI arguments BEFORE any filesystem access.
+
+    `--help` must be side-effect-free: argparse prints usage and exits 0
+    without ever touching docs/. Default (no-arg) behavior is unchanged —
+    the full docs/ tree is regenerated.
+    """
+    parser = argparse.ArgumentParser(
+        description="Generate MkDocs documentation pages from SKILL.md files, "
+                    "agents, and commands. Running with no arguments rewrites "
+                    "the docs/ tree.")
+    return parser.parse_args(argv)
+
+
 def main():
     skills_by_domain = find_skill_files()
 
@@ -556,6 +574,7 @@ description: "{skill_count} {domain_name.lower()} skills — {domain_seo_ctx}. W
         "product": ("Product", ":material-lightbulb-outline:"),
         "project-management": ("Project Management", ":material-clipboard-check-outline:"),
         "ra-qm-team": ("Regulatory & Quality", ":material-shield-check-outline:"),
+        "markdown-html": ("Markdown to HTML", ":material-language-html5:"),
     }
 
     if os.path.isdir(agents_dir):
@@ -633,6 +652,7 @@ description: "{agent_desc}"
         "commercial": "commercial",
         "research-ops": "research-ops",
         "compliance-os": "compliance-os",
+        "markdown-html": "markdown-html",
     }
     seen_slugs = {entry[1] for entry in agent_entries}
     for skill_domain in DOMAINS:
@@ -903,4 +923,5 @@ description: "{cmd_count} slash commands for Claude Code, Codex CLI, and Gemini 
 
 
 if __name__ == "__main__":
+    parse_args()
     main()

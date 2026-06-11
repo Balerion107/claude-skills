@@ -123,6 +123,16 @@ PATTERNS: list[Pattern] = [
         re.compile(r"https?://[^\s'\"<>]*(?:[?&](?:token|access_token|api_key|key)=)[^\s'\"<>&]+"),
         "Strip the token query parameter from the URL.",
     ),
+    Pattern(
+        "private_cidr",
+        re.compile(
+            r"(?<![\d.])(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+            r"|192\.168\.\d{1,3}\.\d{1,3}"
+            r"|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(?:/\d{1,2})?(?![\d.])"
+        ),
+        "Redact internal IP addresses / CIDR ranges; reference the host by role instead.",
+        "low",
+    ),
 ]
 
 

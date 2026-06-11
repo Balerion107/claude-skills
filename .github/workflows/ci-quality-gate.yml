@@ -77,14 +77,46 @@ jobs:
 
       - name: Python syntax check (blocking)
         run: |
+          # Covers every top-level skill domain + scripts/. When adding a new
+          # domain folder, add it here (audit gate G9: this list previously
+          # skipped 8 post-v2.7 domains).
           python -m compileall \
             marketing-skill product-team c-level-advisor \
             engineering-team ra-qm-team engineering \
-            business-growth finance project-management scripts
+            business-growth finance project-management \
+            productivity marketing research \
+            business-operations commercial research-ops \
+            compliance-os markdown-html scripts
 
       - name: Validate plugin.json manifests (blocking — guards #539 + #686)
         run: |
           python scripts/check_plugin_json.py --all
+
+      # ---- Audit guardrails (newgen-2026-06 gates) ----------------------
+      # TODO: flip to blocking after burn-in — concurrent fix agents are
+      # still converging; advisory for now so unrelated PRs aren't blocked.
+      # SLA: flip each gate to blocking by 2026-07-01 (or after 10 consecutive
+      # green advisory runs on dev, whichever comes first). Flip = delete the
+      # continue-on-error line. All four gates were green at PR #835 HEAD.
+      - name: Path-existence linter (gate G1 — advisory)
+        continue-on-error: true
+        run: |
+          python3 scripts/check_paths.py --all
+
+      - name: Dual-publish drift guard (gate G4 — advisory)
+        continue-on-error: true
+        run: |
+          python3 scripts/check_dual_publish.py
+
+      - name: Script --help smoke gate (gate G8 — advisory)
+        continue-on-error: true
+        run: |
+          python3 scripts/smoke_scripts.py
+
+      - name: Counter derivation check (gate G3 — advisory)
+        continue-on-error: true
+        run: |
+          python3 scripts/derive_counters.py --check
 
       - name: Safety dependency audit (requirements*.txt)
         run: |

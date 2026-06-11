@@ -117,7 +117,6 @@ The 12 skills are organized across 5 strategic layers:
 ## 📦 Complete Skills Catalog
 
 ### 1. Senior Regulatory Affairs Manager (Head of Regulatory Affairs)
-**Package:** `regulatory-affairs-head.zip`
 
 **Purpose:** Strategic regulatory leadership and cross-functional coordination for market access.
 
@@ -147,7 +146,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 2. Senior Quality Manager Responsible Person (QMR)
-**Package:** `quality-manager-qmr.zip`
 
 **Purpose:** Overall quality system responsibility and regulatory compliance oversight.
 
@@ -177,7 +175,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 3. Senior Quality Manager - QMS ISO 13485 Specialist
-**Package:** `quality-manager-qms-iso13485.zip`
 
 **Purpose:** ISO 13485 QMS implementation, maintenance, and optimization.
 
@@ -207,7 +204,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 4. Senior CAPA Officer
-**Package:** `capa-officer.zip`
 
 **Purpose:** Corrective and preventive action management within QMS.
 
@@ -237,7 +233,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 5. Senior Quality Documentation Manager
-**Package:** `quality-documentation-manager.zip`
 
 **Purpose:** Documentation control and review of all norms and appendices.
 
@@ -267,7 +262,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 6. Senior Risk Management Specialist
-**Package:** `risk-management-specialist.zip`
 
 **Purpose:** ISO 14971 risk management throughout product lifecycle.
 
@@ -297,7 +291,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 7. Senior Information Security Manager (ISO 27001/27002)
-**Package:** `information-security-manager-iso27001.zip`
 
 **Purpose:** ISMS implementation and cybersecurity compliance for medical devices.
 
@@ -327,7 +320,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 8. Senior MDR 2017/745 Specialist
-**Package:** `mdr-745-specialist.zip`
 
 **Purpose:** EU MDR compliance expertise and consulting.
 
@@ -357,7 +349,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 9. Senior FDA Consultant and Specialist
-**Package:** `fda-consultant-specialist.zip`
 
 **Purpose:** FDA submission pathways and QSR compliance.
 
@@ -387,7 +378,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 10. Senior QMS Audit Expert
-**Package:** `qms-audit-expert.zip`
 
 **Purpose:** Internal and external QMS auditing expertise.
 
@@ -417,7 +407,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 11. Senior ISMS Audit Expert
-**Package:** `isms-audit-expert.zip`
 
 **Purpose:** Information security management system auditing.
 
@@ -447,7 +436,6 @@ The 12 skills are organized across 5 strategic layers:
 ---
 
 ### 12. Senior GDPR/DSGVO Expert
-**Package:** `gdpr-dsgvo-expert.zip`
 
 **Purpose:** EU GDPR and German DSGVO compliance and auditing.
 
@@ -495,14 +483,12 @@ The 12 skills are organized across 5 strategic layers:
 **Security & Privacy Focus?**
 → Focus on: Information Security Manager + GDPR Expert + ISMS Audit Expert
 
-### Step 2: Download Skills
+### Step 2: Get the Skills
 
-Each skill is packaged as a .zip file for easy distribution:
+Each skill is a self-contained folder under `ra-qm-team/skills/` (install via the `ra-qm-skills` marketplace plugin, or copy the folder directly):
 
 ```bash
-# Extract a skill package
-unzip regulatory-affairs-head.zip
-cd regulatory-affairs-head
+cd ra-qm-team/skills/regulatory-affairs-head
 
 # Explore the structure
 ls -la

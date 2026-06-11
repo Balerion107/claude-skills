@@ -1,6 +1,6 @@
 # Engineering Skills Collection
 
-Complete set of 18 engineering role skills tailored to your tech stack (ReactJS, NextJS, NodeJS, Express, React Native, Swift, Kotlin, Flutter, Postgres, GraphQL, Go, Python).
+Complete set of 32 engineering skills (role skills, security suite, AI/ML/Data, and specialized tools) tailored to your tech stack (ReactJS, NextJS, NodeJS, Express, React Native, Swift, Kotlin, Flutter, Postgres, GraphQL, Go, Python).
 
 ## ⚡ Installation
 

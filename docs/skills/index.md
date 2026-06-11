@@ -252,7 +252,6 @@ graph LR
         | [Observability Designer](engineering/observability-designer.md) | Monitoring, tracing, alerting |
         | [Performance Profiler](engineering/performance-profiler.md) | Bottleneck analysis |
         | [Skill Security Auditor](engineering/skill-security-auditor.md) | Vulnerability scanning |
-        | [Release Manager](engineering/release-manager.md) | Release orchestration |
         | [Dependency Auditor](engineering/dependency-auditor.md) | Supply chain security |
         | [API Design Reviewer](engineering/api-design-reviewer.md) | REST/GraphQL review |
         | [API Test Suite Builder](engineering/api-test-suite-builder.md) | API test generation |
@@ -289,7 +288,6 @@ graph LR
         | Skill | Focus |
         |-------|-------|
         | [SEO Audit](marketing-skill/seo-audit.md) | Technical SEO analysis |
-        | [AI SEO](marketing-skill/ai-seo.md) | AI-optimized search |
         | [App Store Optimization](marketing-skill/app-store-optimization.md) | ASO strategy |
         | [Schema Markup](marketing-skill/schema-markup.md) | Structured data |
         | [Analytics Tracking](marketing-skill/analytics-tracking.md) | Tag management |

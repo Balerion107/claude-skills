@@ -2,7 +2,7 @@
 
 ## 📦 **What You're Getting**
 
-**14 world-class, senior-level skills** for building exceptional engineering and AI/ML/Data teams.
+**32 production-ready skills** for building exceptional engineering and AI/ML/Data teams (this quick-start tour covers the original 14 role skills; see README.md for the full current list).
 
 All skills follow your exact template structure with:
 - ✅ **SKILL.md** - Complete documentation with quick start

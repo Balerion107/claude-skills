@@ -272,20 +272,24 @@ The plugin bundles a pre-configured `.mcp.json` pointing at Atlassian's official
 
 ### Example Operations
 
-> **Note:** Tool names below are shown in simplified form for readability. The actual Claude Code prefix for plugin-bundled MCP tools is `mcp__plugin_pm-skills_atlassian__<tool>` — e.g. `mcp__plugin_pm-skills_atlassian__create_issue`. Both the simplified and fully-qualified forms refer to the same tool.
+> **Note:** Real tool names are camelCase and surface in Claude Code as `mcp__atlassian__<toolName>` (server key `atlassian` from the bundled `.mcp.json`; plugin-loaded installs may use a plugin-scoped prefix with the same trailing tool name). The canonical tool list lives in [references/atlassian-mcp-tools.md](references/atlassian-mcp-tools.md) — never invent tool names; capabilities not in that list (project/sprint/filter/space creation, field configuration, automation rules) are not available via MCP and require the Atlassian web UI or REST API.
 
 ```bash
+# Discover accessible sites first (most tools require cloudId)
+mcp__atlassian__getAccessibleAtlassianResources
+
 # Create Jira issue
-mcp__atlassian__create_issue project="PROJ" summary="New feature" type="Story"
+mcp__atlassian__createJiraIssue (cloudId, projectKey="PROJ", issueTypeName="Story", summary="New feature")
 
-# Update issue status
-mcp__atlassian__transition_issue key="PROJ-123" status="In Progress"
+# Update issue status (look up the transition id first)
+mcp__atlassian__getTransitionsForJiraIssue (cloudId, issueIdOrKey="PROJ-123")
+mcp__atlassian__transitionJiraIssue (cloudId, issueIdOrKey="PROJ-123", transition=<id>)
 
-# Create Confluence page
-mcp__atlassian__create_page space="TEAM" title="Sprint Retrospective" content="..."
+# Create Confluence page (body = storage-format XHTML or ADF)
+mcp__atlassian__createConfluencePage (cloudId, space, title="Sprint Retrospective", body="...")
 
 # Run JQL query
-mcp__atlassian__search_issues jql="project = PROJ AND status = 'In Progress'"
+mcp__atlassian__searchJiraIssuesUsingJql (cloudId, jql="project = PROJ AND status = 'In Progress'")
 ```
 
 **Learn More:** See [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) for MCP integration details

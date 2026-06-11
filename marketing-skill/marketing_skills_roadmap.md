@@ -12,9 +12,9 @@ The **content-creator** skill is ready for deployment and includes:
 - **Content Calendar Template**: Monthly planning and tracking system
 
 ### How to Deploy
-1. Download the `content-creator.zip` file
-2. Extract to your team's shared drive or tool repository
-3. Install Python dependencies: `pip install pyyaml`
+1. Copy the `skills/content-production/` folder (content-creator is deprecated; content-production supersedes it)
+2. Place it in your team's shared drive or tool repository
+3. No pip installs needed — scripts are stdlib-only
 4. Team members can use with Claude by uploading the skill
 5. Run training session on brand voice establishment
 
