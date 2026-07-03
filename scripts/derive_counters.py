@@ -274,7 +274,7 @@ def run_check(root: Path, derived: dict) -> int:
             print(f"FAIL: cannot parse marketplace.json: {exc}")
             return 1
 
-    mismatches: list = []
+    mismatches = []
     for label, text in sources:
         claims = extract_claims(text)
         if not claims:
