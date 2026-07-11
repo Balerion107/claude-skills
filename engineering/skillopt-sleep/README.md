@@ -236,6 +236,40 @@ they are not upstream yet.
     appears in `cmd_run`'s `--json` payload or plain-text edit output, or in
     `cmd_harvest`'s redacted payload; executing the actual generated cron
     line end-to-end produces a `0700` log dir and `0600` log file on disk.
+20. **Bug — `scheduler.py`'s per-project marker match used unanchored
+    substring comparison.** `schedule()`/`unschedule()` both located "this
+    project's" managed cron line via `marker not in ln`, a bare substring
+    test, not an exact-match or delimiter-anchored check. Failure scenario:
+    two projects scheduled where one path is a literal prefix of the other
+    (e.g. `/home/user/app` and `/home/user/app-v2`) — `_project_marker`
+    produces `# project=/home/user/app`, which is itself a substring of
+    `# project=/home/user/app-v2`'s line. Running `schedule()` or
+    `unschedule()` for `/home/user/app` would silently drop
+    `/home/user/app-v2`'s cron entry too, with no error or warning — the
+    user's other project's nightly job just disappears. `harvest.py`'s
+    `_project_matches()` (added in this same PR) already gets this right a
+    few hundred lines away (`a == b or a.startswith(b + os.sep) or
+    b.startswith(a + os.sep)`); `scheduler.py`'s marker matching didn't
+    follow the same discipline. Fixed: added `_line_matches_project()`,
+    which anchors on `ln.rstrip().endswith(marker)` since the marker is
+    always the last token of a generated line (see `schedule()`'s
+    `cron_line` construction) — used at both call sites. Verified two ways:
+    a standalone reproduction confirmed the bug before the fix and its
+    absence after, and a full `schedule()`/`unschedule()` round-trip through
+    the actual public API (with `crontab -l`/`crontab -` swapped for an
+    in-memory fake) confirmed scheduling both `/home/user/app` and
+    `/home/user/app-v2`, then unscheduling only `app`, correctly leaves
+    `app-v2`'s line intact.
+21. **Cosmetic — `install-cron.sh`'s printed `--backend` value was
+    unquoted.** `scheduler.py::_runner_cmd` quotes every interpolated value
+    with `shlex.quote()`, but the standalone `install-cron.sh` script
+    (which only *prints* a crontab line for the user to copy into `crontab
+    -e` — nothing is executed automatically) interpolated `--backend
+    ${BACKEND}` unquoted in its heredoc, next to otherwise-quoted
+    `${RUNNER}`/`${PROJECT}`. Low risk since `BACKEND` is normally one of a
+    fixed small set of values and the script never executes anything
+    itself, but inconsistent with the quoting discipline applied everywhere
+    else. Fixed: quoted as `"${BACKEND}"`.
 
 ## What this plugin is
 
@@ -318,7 +352,11 @@ repo's own recurring tasks and get genuine lift on `CLAUDE.md` / a target
   `cron.log` (the CLI's redirected stdout/stderr) is now `chmod 600` too,
   matching state/staging (deviation #19).
 - The generated crontab line, including the `extra` flags parameter, is
-  fully `shlex.quote()`-d, not just the path arguments (deviations #3, #8).
+  fully `shlex.quote()`-d, not just the path arguments (deviations #3, #8,
+  #21). `schedule`/`unschedule` locate a project's own line via an anchored
+  end-of-line match, not a bare substring test, so scheduling/unscheduling
+  one project can't silently drop a sibling project whose path happens to
+  be a prefix of it (deviation #20).
 - `replay_mode: "fresh"` (worktree replay) is not implemented — every replay
   runs as `"mock"` regardless, and the report says so explicitly rather than
   implying isolation that isn't happening (deviation #11).

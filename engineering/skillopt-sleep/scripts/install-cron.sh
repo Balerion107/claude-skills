@@ -21,7 +21,7 @@ cat <<EOF
 # (unless you pass --auto-adopt below).
 #
 # Copy the next line into 'crontab -e':
-${MIN} ${HOUR} * * *  "${RUNNER}" run --project "${PROJECT}" --scope invoked --backend ${BACKEND} >> "${PROJECT}/.skillopt-sleep/cron.log" 2>&1
+${MIN} ${HOUR} * * *  "${RUNNER}" run --project "${PROJECT}" --scope invoked --backend "${BACKEND}" >> "${PROJECT}/.skillopt-sleep/cron.log" 2>&1
 #
 # For fully-autonomous adoption (power users), append: --auto-adopt
 # To spend real API budget for genuine lift, set BACKEND=anthropic above.

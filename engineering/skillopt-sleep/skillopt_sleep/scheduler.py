@@ -103,6 +103,23 @@ def _project_marker(project: str) -> str:
     return f"# project={os.path.abspath(project)}"
 
 
+def _line_matches_project(ln: str, marker: str) -> bool:
+    """True if ``ln`` is the managed cron line for this project's marker.
+
+    The marker is always appended as the last token of a generated line
+    (see ``schedule()``'s ``cron_line`` construction), so anchor on that
+    rather than a bare substring test -- ``marker not in ln`` would also
+    match a *different* project whose absolute path happens to be a
+    prefix of this one (e.g. scheduling/unscheduling ``/home/user/app``
+    would silently drop ``/home/user/app-v2``'s line too, since
+    "# project=/home/user/app" is a literal substring of
+    "# project=/home/user/app-v2"). Mirrors the anchored comparison
+    ``harvest.py``'s ``_project_matches()`` already uses for the same
+    class of path-prefix ambiguity.
+    """
+    return ln.rstrip().endswith(marker)
+
+
 def schedule(project: str, *, backend: str = "mock", hour: int = 3, minute: int = 17,
              extra: str = "", python: Optional[str] = None) -> Tuple[bool, str]:
     """Install (or replace) the nightly entry for ``project``.
@@ -121,7 +138,7 @@ def schedule(project: str, *, backend: str = "mock", hour: int = 3, minute: int 
     outside, managed = _split_managed(_read_crontab())
     # drop any existing line for this project, then add the new one
     marker = _project_marker(project)
-    managed = [ln for ln in managed if marker not in ln and ln.strip()]
+    managed = [ln for ln in managed if not _line_matches_project(ln, marker) and ln.strip()]
     managed.append(cron_line)
 
     block = _BEGIN + "\n" + "\n".join(managed) + "\n" + _END
@@ -143,7 +160,7 @@ def unschedule(project: Optional[str] = None, *, all_projects: bool = False) -> 
         managed = []
     elif project:
         marker = _project_marker(project)
-        managed = [ln for ln in managed if marker not in ln and ln.strip()]
+        managed = [ln for ln in managed if not _line_matches_project(ln, marker) and ln.strip()]
     if managed:
         block = _BEGIN + "\n" + "\n".join(managed) + "\n" + _END
         new_crontab = (outside + "\n\n" + block + "\n").lstrip("\n")
