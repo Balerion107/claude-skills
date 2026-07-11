@@ -176,6 +176,13 @@ they are not upstream yet.
     `SKILL.md` files themselves are intentionally left at their existing
     permissions — those are the user's own, often-committed files, not new
     output this plugin introduces.
+17. **Cosmetic — misleading redaction placeholder label.** `staging.py`'s
+    `sk-[A-Za-z0-9_-]{10,}` pattern matched any `sk-`-prefixed key (OpenAI,
+    Anthropic's `sk-ant-...`, and other vendors sharing the convention) but
+    labeled every match `[REDACTED_OPENAI_KEY]` regardless of which vendor's
+    key shape it actually was. Redaction itself was unaffected — the text
+    was scrubbed either way — but the placeholder implied a narrower match
+    than the pattern actually has. Fixed: relabeled to `[REDACTED_API_KEY]`.
 
 ## What this plugin is
 

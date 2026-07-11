@@ -20,7 +20,9 @@ from skillopt_sleep.types import SleepReport
 # (diagnostics, reports). Kept here so every on-disk artifact shares one
 # redaction pass; harvest_codex reuses these for session text too.
 _SECRET_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"sk-[A-Za-z0-9_-]{10,}"), "[REDACTED_OPENAI_KEY]"),
+    # "sk-" is not OpenAI-specific: Anthropic (sk-ant-...) and other vendors
+    # share the prefix, so the placeholder names the shape, not one vendor.
+    (re.compile(r"sk-[A-Za-z0-9_-]{10,}"), "[REDACTED_API_KEY]"),
     # Distinctive vendor token prefixes (low false-positive: these prefixes do
     # not occur in normal diagnostic prose).
     (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "[REDACTED_AWS_KEY]"),
