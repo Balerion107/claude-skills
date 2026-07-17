@@ -35,6 +35,7 @@ REFOCUS_MINUTES = 23  # avg time to refocus after a context switch (Gloria Mark,
 EPILOG = """\
 exit codes:
   0   MEET      — decision + agenda + owner present; cost printed
+  1   usage error — bad or missing flags (never a verdict)
   2   ASYNC     — no decision needed; recommend a memo/thread instead of a meeting
   3   NOT-READY — decision exists but agenda and/or owner missing (named in output)
 
@@ -156,14 +157,14 @@ def main(argv: List[str]) -> int:
     elif args.attendees is not None and args.minutes is not None:
         if args.attendees < 1 or args.minutes < 1:
             print("error: --attendees and --minutes must both be >= 1", file=sys.stderr)
-            return 2
+            return 1
         vals = dict(attendees=args.attendees, minutes=args.minutes, avg_rate=args.avg_rate,
                     include_refocus=args.include_refocus, has_decision=args.has_decision,
                     has_agenda=args.has_agenda, has_owner=args.has_owner)
     else:
         p.print_help()
         print("\nerror: provide --attendees and --minutes, or --sample", file=sys.stderr)
-        return 2
+        return 1
 
     result = evaluate(**vals)
     if args.json:

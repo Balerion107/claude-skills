@@ -162,10 +162,11 @@ def plan(start: int, end: int, tasks: List[Dict[str, Any]],
         overflow = cursor + dur_b - end
         return {
             "verdict": "OVERFLOW",
-            "reason": (f"The day overflows {fmt(end)} by {overflow} min. Defer shallow work "
-                       f"instead of extending the day: "
-                       + (", ".join(f'"{t["name"]}"' for t in (batch_b or batch_a))
-                          or "trim the deep blocks")),
+            "reason": (f"The day overflows {fmt(end)} by {overflow} min. "
+                       + (("Defer shallow work instead of extending the day: "
+                           + ", ".join(f'"{t["name"]}"' for t in (batch_b or batch_a)))
+                          if (batch_b or batch_a) else
+                          "Deep demand alone exceeds the day — trim a deep block or extend --end.")),
             "overflow_minutes": overflow,
             "defer_candidates": [t["name"] for t in (batch_b or batch_a)],
         }

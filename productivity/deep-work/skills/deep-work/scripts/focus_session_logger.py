@@ -155,6 +155,21 @@ def render_human(kind: str, r: Dict[str, Any]) -> str:
     return "\n".join(out)
 
 
+SAMPLE_STATUS = {
+    "kind": "status",
+    "sample": True,
+    "week": "2026-07-13 .. 2026-07-19",
+    "as_of": "2026-07-16",
+    "deep_hours_this_week": 8.5,
+    "target_hours": 15.0,
+    "on_track": False,
+    "remaining_hours": 6.5,
+    "by_day_minutes": {"2026-07-13": 120, "2026-07-14": 180,
+                       "2026-07-15": 90, "2026-07-16": 120},
+    "streak_days": 4,
+    "headline": "8.5h of deep work this week vs a 15h target — 6.5h still to block.",
+}
+
 SAMPLE_REPORT = """Deep-Work Status — week 2026-07-13 .. 2026-07-19 (sample, no disk touched)
 ================================================================
   Deep hours: 8.5h / 15h target   (6.5h remaining)
@@ -178,6 +193,8 @@ def main(argv: List[str]) -> int:
                    help=f"Path to the JSON ledger (default {DEFAULT_STATE})")
     p.add_argument("--sample", action="store_true",
                    help="Print a canned status report without touching disk")
+    p.add_argument("--json", action="store_true",
+                   help="Emit JSON instead of the report (also honored with --sample)")
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--json", action="store_true", help="Emit JSON instead of the report")
     sub = p.add_subparsers(dest="cmd")
@@ -198,7 +215,10 @@ def main(argv: List[str]) -> int:
     args = p.parse_args(argv)
 
     if args.sample:
-        print(SAMPLE_REPORT)
+        if args.json:
+            print(json.dumps(SAMPLE_STATUS, indent=2))
+        else:
+            print(SAMPLE_REPORT)
         return 0
     if not args.cmd:
         p.print_help()
