@@ -34,9 +34,9 @@ DECISION_PREFIXES = ("decide", "choose", "approve")
 EPILOG = """\
 exit codes:
   0   agenda built (timeboxes + 5-min closing buffer fit --length; all outcomes present)
+  1   usage error — malformed --topic spec or bad/missing flags (never a verdict)
   2   refused — one or more topics has an empty desired outcome (named in output)
   3   refused — timeboxes + 5-min closing buffer exceed --length (overflow named in output)
-  4   refused — malformed --topic spec (expected "title:desired_outcome:minutes:owner")
 
 --help and --sample exit 0.
 """
@@ -177,18 +177,18 @@ def main(argv: List[str]) -> int:
     else:
         p.print_help()
         print("\nerror: provide --length and at least one --topic, or --sample", file=sys.stderr)
-        return 4
+        return 1
 
     if length < CLOSING_BUFFER_MIN + 1:
         print(f"error: --length must be at least {CLOSING_BUFFER_MIN + 1} minutes "
               f"({CLOSING_BUFFER_MIN}-min closing buffer is mandatory)", file=sys.stderr)
-        return 4
+        return 1
 
     try:
         topics = [parse_topic(s) for s in specs]
     except ValueError as e:
         print(f"error: {e}", file=sys.stderr)
-        return 4
+        return 1
 
     result = build(topics, length)
     if args.json:
