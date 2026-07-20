@@ -49,6 +49,10 @@ EXCLUDED_TOP_LEVEL = {
     "node_modules",
     ".github",
     ".claude",
+    # Maintainer environment tooling (Windows bootstrap scripts, model-council
+    # utility) — committed and public like audit/, but not skill-library
+    # product, so it never moves the headline counters.
+    "windows-setup",
 }
 
 DOC_FILENAMES = {"CLAUDE.md", "README.md"}

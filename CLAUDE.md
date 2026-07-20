@@ -27,6 +27,9 @@ per-domain reports with per-skill verification criteria that follow-up PRs use
 as acceptance gates. It is excluded from headline counters by
 `scripts/derive_counters.py`, but it is committed and visible to cloners.
 `AUDIT_REPORT.md` (gitignored, above) is the older internal-snapshot format.
+The top-level `windows-setup/` directory (maintainer Windows-environment
+bootstrap scripts + model-council utility) is committed and counter-excluded
+the same way — it is environment tooling, not a skill package.
 
 In-repo references to paths under these folders (e.g. `documentation/implementation/...`) resolve locally for the maintainer but appear as dead links on GitHub. This is intentional.
 
